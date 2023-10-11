@@ -4,7 +4,6 @@ from PIL.ExifTags import TAGS
 from scripts.s3_upload import AWS
 import os
 from dotenv import load_dotenv
-import requests
 load_dotenv()
 
 BUCKET_NAME = os.environ["BUCKET_NAME"]
@@ -105,10 +104,6 @@ class File(db.Model):
 
     @classmethod
     def addImage(cls, file, name): # Consider removing name as an argument and instead autogenerating
-
-
-
-
 
         aws.save_file(file, name) # Save file to AWS.
 
