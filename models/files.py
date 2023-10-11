@@ -4,7 +4,7 @@ from PIL.ExifTags import TAGS
 from scripts.s3_upload import AWS
 import os
 from dotenv import load_dotenv
-
+import requests
 load_dotenv()
 
 BUCKET_NAME = os.environ["BUCKET_NAME"]
@@ -108,8 +108,11 @@ class File(db.Model):
 
 
 
-        # img =
 
+
+        aws.save_file(file, name) # Save file to AWS.
+
+        presigned_url = aws.get_presigned_url(name)
 
         img = Image.open(file)
 
@@ -122,12 +125,6 @@ class File(db.Model):
                 tagged_exif[TAGS.get(key)] = exif_data[key]
 
         print("TAGGED EXIF:", tagged_exif)
-
-
-
-        aws.save_file(file, name) # Save file to AWS.
-
-        presigned_url = aws.get_file_info_from_aws(name)
 
         print("Presigned URL", presigned_url)
 

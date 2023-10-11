@@ -38,6 +38,7 @@ def submit_form():
     name = request.form.get("name")
     file = request.files.get("file")
 
+    # aws.save_file(file, name)
     File.addImage(file=file, name=name)
 
     return render_template('form.html')
