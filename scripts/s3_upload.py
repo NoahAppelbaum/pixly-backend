@@ -1,10 +1,11 @@
 import os
 import boto3
-from dotenv import load_dotenv
+# from dotenv import load_dotenv
+
 
 URL_WITH_REGION_CODE = "https://s3.us-west-1.amazonaws.com"
 
-load_dotenv()
+# load_dotenv()
 
 # BUCKET_NAME = os.environ["BUCKET_NAME"]
 # ACCESS_KEY = os.environ["ACCESS_KEY"]

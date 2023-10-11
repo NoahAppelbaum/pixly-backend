@@ -41,9 +41,7 @@ def display_form():
 @app.post("/")
 def submit_form():
     name = request.form.get("name")
-    file = request.form.get("file")
-
-    print("NAME", name, "FILE", file)
+    file = request.files.get("file")
 
     # Put on AWS, then get a URL response.
     aws.save_file(file, name)
@@ -53,6 +51,8 @@ def submit_form():
     presigned_url = aws.get_file_info_from_aws(name)
 
     print("Presigned URL", presigned_url)
+
+    # TODO: do some database stuff!
 
 
 # Get all files
