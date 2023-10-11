@@ -3,6 +3,9 @@ from PIL import Image
 from PIL.ExifTags import TAGS
 from scripts.s3_upload import AWS
 import os
+
+import tempfile
+
 from dotenv import load_dotenv
 load_dotenv()
 
@@ -70,7 +73,7 @@ class File(db.Model):
     )
 
     DateTime = db.Column(
-        db.DateTime,
+        db.String,
         nullable=True,
     )
 
@@ -105,29 +108,52 @@ class File(db.Model):
     @classmethod
     def addImage(cls, file, name): # Consider removing name as an argument and instead autogenerating
 
-        aws.save_file(file, name) # Save file to AWS.
+        fp = tempfile.TemporaryFile()
+        fp.write(file.read())
+        fp.seek(0)
 
-        presigned_url = aws.get_presigned_url(name)
+        print("fp", fp)
 
-        img = Image.open(file)
+        img = Image.open(fp)
+        print("img", img)
 
         exif_data = img.getexif()
-        print(exif_data)
+        print("exif_data", exif_data)
+        print("TAGS", TAGS)
 
         tagged_exif = {}
         for key in exif_data:
-            if str(key) in {"ImageWidth", "ImageLength", "Make", "Model", "Software", "Orientation", "DateTime", "Artist", "GPSLatitudeRef", "GPSLongitudeRef", "GPSAltitudeRef"}:
+
+            print("KEY", key)
+
+            if TAGS[key] in {"ImageWidth", "ImageLength", "Make", "Model", "Software", "Orientation", "DateTime", "Artist", "GPSLatitudeRef", "GPSLongitudeRef", "GPSAltitudeRef"}:
                 tagged_exif[TAGS.get(key)] = exif_data[key]
 
         print("TAGGED EXIF:", tagged_exif)
 
+
+        fp.seek(0)
+
+        aws.save_file(fp, name) # Save file to AWS.
+
+        presigned_url = aws.get_presigned_url(name)
         print("Presigned URL", presigned_url)
+
+
+
 
         # TODO: do some database stuff!
 
         new_file = File(presigned_url=presigned_url, name=name, **tagged_exif)
         db.session.add(new_file)
         db.session.commit()
+
+
+
+
+        fp.close()
+
+
 
 
 

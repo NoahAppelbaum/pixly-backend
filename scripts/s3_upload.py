@@ -23,9 +23,9 @@ class AWS:
         self.bucket_name = bucket_name
         self.s3_client = boto3.client('s3', aws_access_key_id=aws_access_key_id, aws_secret_access_key=aws_secret_access_key)
 
-    def save_file(self, file_data, filename):
-        # with open(file_data, "rb") as data:
-        self.s3_client.upload_fileobj(file_data, self.bucket_name, filename)
+    def save_file(self, file, filename):
+        # with open(file, "rb") as file_data:
+        self.s3_client.upload_fileobj(file, self.bucket_name, filename)
 
     def get_presigned_url(self, filename):
         response = self.s3_client.generate_presigned_url('get_object',
