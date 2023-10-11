@@ -1,6 +1,19 @@
 from flask_sqlalchemy import SQLAlchemy
+from PIL import Image
+from PIL.ExifTags import TAGS
+from scripts.s3_upload import AWS
+import os
+from dotenv import load_dotenv
+
+load_dotenv()
+
+BUCKET_NAME = os.environ["BUCKET_NAME"]
+ACCESS_KEY = os.environ["ACCESS_KEY"]
+SECRET_ACCESS_KEY = os.environ["SECRET_ACCESS_KEY"]
 
 db = SQLAlchemy()
+
+aws = AWS(ACCESS_KEY, SECRET_ACCESS_KEY, BUCKET_NAME)
 
 class File(db.Model):
     """file objects with signed URLs"""
@@ -14,7 +27,7 @@ class File(db.Model):
     )
 
     #Signed URL
-    signed_url = db.Column(
+    presigned_url = db.Column(
         db.String,
         nullable=False,
         unique=True
@@ -81,6 +94,49 @@ class File(db.Model):
         db.Integer,
         nullable=True,
     )
+
+    # Open in Pillow
+    # Strip and store exif data
+
+
+    # Upload to AWS
+    # Get signed url back
+    # THEN put in database
+
+    @classmethod
+    def addImage(cls, file, name): # Consider removing name as an argument and instead autogenerating
+
+
+
+        # img =
+
+
+        img = Image.open(file)
+
+        exif_data = img.getexif()
+        print(exif_data)
+
+        tagged_exif = {}
+        for key in exif_data:
+            if str(key) in {"ImageWidth", "ImageLength", "Make", "Model", "Software", "Orientation", "DateTime", "Artist", "GPSLatitudeRef", "GPSLongitudeRef", "GPSAltitudeRef"}:
+                tagged_exif[TAGS.get(key)] = exif_data[key]
+
+        print("TAGGED EXIF:", tagged_exif)
+
+
+
+        aws.save_file(file, name) # Save file to AWS.
+
+        presigned_url = aws.get_file_info_from_aws(name)
+
+        print("Presigned URL", presigned_url)
+
+        # TODO: do some database stuff!
+
+        new_file = File(presigned_url=presigned_url, name=name, **tagged_exif)
+        db.session.add(new_file)
+        db.session.commit()
+
 
 
 def connect_db(app):

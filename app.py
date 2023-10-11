@@ -1,10 +1,9 @@
 import os
 from dotenv import load_dotenv
 # TODO: import scripts as needed
-from models.files import File, connect_db
+from models.files import File, db, connect_db
 from scripts.s3_upload import AWS
 from flask_sqlalchemy import SQLAlchemy
-
 from flask import Flask, jsonify, request, flash, redirect, session, render_template
 
 load_dotenv()
@@ -13,17 +12,13 @@ BUCKET_NAME = os.environ["BUCKET_NAME"]
 ACCESS_KEY = os.environ["ACCESS_KEY"]
 SECRET_ACCESS_KEY = os.environ["SECRET_ACCESS_KEY"]
 
-db = SQLAlchemy()
-
 app = Flask(__name__)
 
 aws = AWS(ACCESS_KEY, SECRET_ACCESS_KEY, BUCKET_NAME)
 
-
 app.config['SQLALCHEMY_DATABASE_URI'] = os.environ['DATABASE_URI']
-# app.config['SQLALCHEMY_ECHO'] = False
-# app.config['DEBUG_TB_INTERCEPT_REDIRECTS'] = True
-
+app.config['SQLALCHEMY_ECHO'] = False
+app.config['DEBUG_TB_INTERCEPT_REDIRECTS'] = True
 
 connect_db(app)
 
@@ -43,16 +38,11 @@ def submit_form():
     name = request.form.get("name")
     file = request.files.get("file")
 
-    # Put on AWS, then get a URL response.
-    aws.save_file(file, name)
+    File.addImage(file=file, name=name)
 
-    print("Successfully saved!")
+    return render_template('form.html')
 
-    presigned_url = aws.get_file_info_from_aws(name)
 
-    print("Presigned URL", presigned_url)
-
-    # TODO: do some database stuff!
 
 
 # Get all files
