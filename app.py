@@ -27,24 +27,21 @@ connect_db(app)
 #API endpoints
 
 # Homepage
-@app.get("/")
-def display_form():
-    return render_template('form.html')
+# @app.get("/")
+# def display_form():
+#     return render_template('form.html')
 
 
 # Submit form
-@app.post("/")
+@app.post("/files")
 def submit_form():
     name = request.form.get("name")
     file = request.files.get("file")
 
     # aws.save_file(file, name)
-    File.addImage(file=file, name=name)
+    new_file = File.addImage(file=file, name=name)
 
-    return render_template('form.html')
-
-
-
+    return jsonify(new_file).status_code(201)
 
 # Get all files
 @app.get("/files")
@@ -62,7 +59,5 @@ def get_one_file(id):
     file = File.query.get_or_404(id)
     return jsonify(file)
 
-#TODO: Endpoint uploading a file -- adding url to db (+ EXIF data??)
-#
 
 #TODO: endpoint for updating/editing a file

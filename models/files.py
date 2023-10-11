@@ -107,51 +107,36 @@ class File(db.Model):
 
     @classmethod
     def addImage(cls, file, name): # Consider removing name as an argument and instead autogenerating
+        """Uploads a passed image file to S3 bucket with name, and adds the return
+        S3 presigned URL as well as the image file's metadata to the database"""
+        #TODO: refactor/put logic where it needs to go
 
         fp = tempfile.TemporaryFile()
         fp.write(file.read())
         fp.seek(0)
 
-        print("fp", fp)
-
         img = Image.open(fp)
-        print("img", img)
 
         exif_data = img.getexif()
-        print("exif_data", exif_data)
-        print("TAGS", TAGS)
 
         tagged_exif = {}
         for key in exif_data:
-
-            print("KEY", key)
-
             if TAGS[key] in {"ImageWidth", "ImageLength", "Make", "Model", "Software", "Orientation", "DateTime", "Artist", "GPSLatitudeRef", "GPSLongitudeRef", "GPSAltitudeRef"}:
                 tagged_exif[TAGS.get(key)] = exif_data[key]
 
-        print("TAGGED EXIF:", tagged_exif)
-
-
         fp.seek(0)
-
         aws.save_file(fp, name) # Save file to AWS.
 
         presigned_url = aws.get_presigned_url(name)
         print("Presigned URL", presigned_url)
 
-
-
-
-        # TODO: do some database stuff!
-
         new_file = File(presigned_url=presigned_url, name=name, **tagged_exif)
         db.session.add(new_file)
         db.session.commit()
 
-
-
-
         fp.close()
+
+        return new_file
 
 
 
