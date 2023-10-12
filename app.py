@@ -74,8 +74,19 @@ def editImage(id):
 
     file = File.query.get_or_404(id)
 
-    urllib.request.urlretrieve(file.presigned_url, "image")
+    temp_file, file_name = urllib.request.urlretrieve(file.presigned_url)
 
-    editedImage = EditImage.editImage("image")
+    #TODO: make this greyScaleImage one of several that can be called
+    #    as needed
+    editedImage = EditImage.greyScaleImage(temp_file)
 
-    return editedImage
+    with open(editedImage, "rb") as image_data:
+        aws.save_file(file=image_data, filename=f"{file.name}-edit")
+    edit_url = aws.get_presigned_url(f"{file.name}-edit")
+
+    file.edit_url = edit_url
+    db.session.merge(file)
+    db.session.commit()
+
+    # TODO: return statement????
+    return jsonify({"newURL": file.editurl})
