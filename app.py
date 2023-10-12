@@ -8,6 +8,7 @@ from flask import Flask, jsonify, request, flash, redirect, session, render_temp
 from flask_cors import CORS, cross_origin
 from editImage import EditImage
 import urllib.request
+import tempfile
 
 load_dotenv()
 
@@ -79,9 +80,12 @@ def editImage(id):
     #TODO: make this greyScaleImage one of several that can be called
     #    as needed
     editedImage = EditImage.greyScaleImage(temp_file)
+    editedImage.seek(0)
 
-    with open(editedImage, "rb") as image_data:
-        aws.save_file(file=image_data, filename=f"{file.name}-edit")
+    aws.save_file(file=editedImage, filename=f"{file.name}-edit")
+
+    # with open(editedImage, "rb") as image_data:
+    # aws.save_file(file=image_data, filename=f"{file.name}-edit")
     edit_url = aws.get_presigned_url(f"{file.name}-edit")
 
     file.edit_url = edit_url

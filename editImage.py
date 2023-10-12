@@ -1,5 +1,6 @@
 from PIL import Image
-from PIL.ExifTags import TAGS
+# from PIL.ExifTags import TAGS
+import tempfile
 
 class EditImage:
     """Contains methods for editing a selected image"""
@@ -7,6 +8,10 @@ class EditImage:
     @classmethod
     def greyScaleImage(cls, image):
 
-
         img = Image.open(image)
-        return img.convert("L")
+        converted_image = img.convert("L")
+
+        fp = tempfile.TemporaryFile()
+        converted_image.save(fp, format="jpeg")
+
+        return fp
