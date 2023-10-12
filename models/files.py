@@ -138,6 +138,11 @@ class File(db.Model):
 
         return new_file
 
+    @classmethod
+    def get_all(cls):
+        file_objects = File.query.all()
+        return [{ "name": file.name, "presignedUrl": file.presigned_url } for file in file_objects]
+
 
 
 

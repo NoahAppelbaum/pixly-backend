@@ -5,6 +5,7 @@ from models.files import File, db, connect_db
 from scripts.s3_upload import AWS
 from flask_sqlalchemy import SQLAlchemy
 from flask import Flask, jsonify, request, flash, redirect, session, render_template
+from flask_cors import CORS
 
 load_dotenv()
 
@@ -13,6 +14,7 @@ ACCESS_KEY = os.environ["ACCESS_KEY"]
 SECRET_ACCESS_KEY = os.environ["SECRET_ACCESS_KEY"]
 
 app = Flask(__name__)
+CORS(app)
 
 aws = AWS(ACCESS_KEY, SECRET_ACCESS_KEY, BUCKET_NAME)
 
@@ -35,8 +37,8 @@ connect_db(app)
 # Submit form
 @app.post("/files")
 def submit_form():
-    name = request.form.get("name")
-    file = request.files.get("file")
+    name = request.body.formData.get("name")
+    file = request.body.formData.get("file")
 
     # aws.save_file(file, name)
     new_file = File.addImage(file=file, name=name)
@@ -47,7 +49,8 @@ def submit_form():
 @app.get("/files")
 def get_files():
     """Returns info for all files"""
-    files = File.query.all()
+    files = File.get_all()
+    print("!!FILES:", files)
     return jsonify(files)
     #TODO: some means of filtering for search -- off the body
 
