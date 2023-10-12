@@ -25,7 +25,12 @@ class AWS:
 
     def save_file(self, file, filename):
         # with open(file, "rb") as file_data:
-        self.s3_client.upload_fileobj(file, self.bucket_name, filename)
+        self.s3_client.upload_fileobj(
+            file,
+            self.bucket_name,
+            filename,
+            ExtraArgs={"ContentType": "image/svg+xml"}
+            )
 
     def get_presigned_url(self, filename):
         response = self.s3_client.generate_presigned_url('get_object',

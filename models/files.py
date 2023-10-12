@@ -135,8 +135,8 @@ class File(db.Model):
         db.session.commit()
 
         fp.close()
-
-        return new_file
+        # FIXME: Return a dictionary with the new file's properties. DB query?
+        return {File.query.get_one_or_none(new_file.id)}
 
     @classmethod
     def get_all(cls):

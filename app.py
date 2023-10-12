@@ -5,7 +5,7 @@ from models.files import File, db, connect_db
 from scripts.s3_upload import AWS
 from flask_sqlalchemy import SQLAlchemy
 from flask import Flask, jsonify, request, flash, redirect, session, render_template
-from flask_cors import CORS
+from flask_cors import CORS, cross_origin
 
 load_dotenv()
 
@@ -38,14 +38,15 @@ connect_db(app)
 @app.post("/files")
 def submit_form():
 
-    print("request!!!", request)
-
-    print("request.form", request.form)
-
     name = request.form.get("name")
-    file = request.form.get("file")
+    file = request.files.get("file")
+    print("request.files", request.files)
+
+    print("FROM MULTIDICT: name:", name, "file:", file)
 
     new_file = File.addImage(file=file, name=name)
+
+    print("Success? File Uploaded and stored?!")
 
     return jsonify(new_file).status_code(201)
 
