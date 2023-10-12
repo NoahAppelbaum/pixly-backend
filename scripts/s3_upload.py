@@ -1,30 +1,15 @@
-import os
 import boto3
-# from dotenv import load_dotenv
-
 
 URL_WITH_REGION_CODE = "https://s3.us-west-1.amazonaws.com"
-
-# load_dotenv()
-
-# BUCKET_NAME = os.environ["BUCKET_NAME"]
-# ACCESS_KEY = os.environ["ACCESS_KEY"]
-# SECRET_ACCESS_KEY = os.environ["SECRET_ACCESS_KEY"]
-
-
-# s3_client = boto3.client('s3', aws_access_key_id = ACCESS_KEY, aws_secret_access_key = SECRET_ACCESS_KEY)
 
 
 class AWS:
     """Allows user to interact with AWS s3 for files."""
     def __init__(self, aws_access_key_id, aws_secret_access_key, bucket_name):
-        # self.aws_access_key_id = aws_access_key_id
-        # self.aws_secret_access_key = aws_secret_access_key
         self.bucket_name = bucket_name
         self.s3_client = boto3.client('s3', aws_access_key_id=aws_access_key_id, aws_secret_access_key=aws_secret_access_key)
 
     def save_file(self, file, filename):
-        # with open(file, "rb") as file_data:
         self.s3_client.upload_fileobj(
             file,
             self.bucket_name,

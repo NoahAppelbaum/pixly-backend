@@ -6,6 +6,8 @@ from scripts.s3_upload import AWS
 from flask_sqlalchemy import SQLAlchemy
 from flask import Flask, jsonify, request, flash, redirect, session, render_template
 from flask_cors import CORS, cross_origin
+from editImage import EditImage
+import urllib.request
 
 load_dotenv()
 
@@ -66,3 +68,14 @@ def get_one_file(id):
 
 
 #TODO: endpoint for updating/editing a file
+@app.post("/files/<int:id>")
+def editImage(id):
+    """Returns edited image upon submission of edits"""
+
+    file = File.query.get_or_404(id)
+
+    urllib.request.urlretrieve(file.presigned_url, "image")
+
+    editedImage = EditImage.editImage("image")
+
+    return editedImage

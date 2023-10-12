@@ -35,6 +35,12 @@ class File(db.Model):
         unique=True
     )
 
+    #Edit URL, starts out as null
+    edit_url = db.Column(
+        db.String,
+        nullable=True
+    )
+
     #TODO: make a decision about how images get named -- user provided, filename, slug?
     name = db.Column(
         db.String(60),
@@ -143,6 +149,7 @@ class File(db.Model):
             "name": new_file.name,
             "id": new_file.id,
             "presignedUrl": new_file.presigned_url,
+            "editUrl": new_file.edit_url,
             "exifData": {
                 "imageWidth": new_file.ImageWidth,
                 "imageLength": new_file.ImageLength,
@@ -164,6 +171,7 @@ class File(db.Model):
             "name": file.name,
             "id": file.id,
             "presignedUrl": file.presigned_url,
+            "editUrl": file.edit_url,
             "exifData": {
                 "imageWidth": file.ImageWidth,
                 "imageLength": file.ImageLength,
