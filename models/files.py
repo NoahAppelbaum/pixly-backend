@@ -137,7 +137,6 @@ class File(db.Model):
         fp.close()
 
         print("new File!", new_file)
-        # FIXME: Return a dictionary with the new file's properties. DB query?
         return {"name": new_file.name, "id": new_file.id, "presigned_url": new_file.presigned_url, "artist": new_file.Artist}
 
     @classmethod

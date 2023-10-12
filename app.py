@@ -53,7 +53,6 @@ def submit_form():
 def get_files():
     """Returns info for all files"""
     files = File.get_all()
-    print("!!FILES:", files)
     return jsonify(files)
     #TODO: some means of filtering for search -- off the body
 
