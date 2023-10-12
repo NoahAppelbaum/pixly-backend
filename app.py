@@ -37,10 +37,14 @@ connect_db(app)
 # Submit form
 @app.post("/files")
 def submit_form():
-    name = request.body.formData.get("name")
-    file = request.body.formData.get("file")
 
-    # aws.save_file(file, name)
+    print("request!!!", request)
+
+    print("request.form", request.form)
+
+    name = request.form.get("name")
+    file = request.form.get("file")
+
     new_file = File.addImage(file=file, name=name)
 
     return jsonify(new_file).status_code(201)
