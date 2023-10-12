@@ -138,14 +138,45 @@ class File(db.Model):
         db.session.commit()
 
         fp.close()
-
         print("new File!", new_file)
-        return {"name": new_file.name, "id": new_file.id, "presigned_url": new_file.presigned_url, "artist": new_file.Artist}
+        return {
+            "name": new_file.name,
+            "id": new_file.id,
+            "presignedUrl": new_file.presigned_url,
+            "exifData": {
+                "imageWidth": new_file.ImageWidth,
+                "imageLength": new_file.ImageLength,
+                "make": new_file.Make,
+                "model": new_file.Model,
+                "software": new_file.Software,
+                "orientation": new_file.Orientation,
+                "dateTime": new_file.DateTime,
+                "artist": new_file.Artist,
+                "gpsLatitudeRef": new_file.GPSLatitudeRef,
+                "gpsLongitudeRef": new_file.GPSLongitudeRef,
+                "gpsAltitudeRef": new_file.GPSAltitudeRef
+        }}
 
     @classmethod
     def get_all(cls):
         file_objects = File.query.all()
-        return [{ "name": file.name,  "id": file.id, "presignedUrl": file.presigned_url, "artist": file.Artist } for file in file_objects]
+        return [{
+            "name": file.name,
+            "id": file.id,
+            "presignedUrl": file.presigned_url,
+            "exifData": {
+                "imageWidth": file.ImageWidth,
+                "imageLength": file.ImageLength,
+                "make": file.Make,
+                "model": file.Model,
+                "software": file.Software,
+                "orientation": file.Orientation,
+                "dateTime": file.DateTime,
+                "artist": file.Artist,
+                "gpsLatitudeRef": file.GPSLatitudeRef,
+                "gpsLongitudeRef": file.GPSLongitudeRef,
+                "gpsAltitudeRef": file.GPSAltitudeRef
+        }} for file in file_objects]
 
 
 
