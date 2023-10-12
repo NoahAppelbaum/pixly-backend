@@ -131,6 +131,9 @@ class File(db.Model):
         print("Presigned URL", presigned_url)
 
         new_file = File(presigned_url=presigned_url, name=name, **tagged_exif)
+
+        print("NEW FILE from files.py", new_file)
+
         db.session.add(new_file)
         db.session.commit()
 
@@ -142,7 +145,7 @@ class File(db.Model):
     @classmethod
     def get_all(cls):
         file_objects = File.query.all()
-        return [{ "name": file.name, "presignedUrl": file.presigned_url } for file in file_objects]
+        return [{ "name": file.name,  "id": file.id, "presignedUrl": file.presigned_url, "artist": file.Artist } for file in file_objects]
 
 
 
