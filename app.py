@@ -40,15 +40,13 @@ def submit_form():
 
     name = request.form.get("name")
     file = request.files.get("file")
-    print("request.files", request.files)
-
-    print("FROM MULTIDICT: name:", name, "file:", file)
+    # print("request.files", request.files)
+    # print("FROM MULTIDICT: name:", name, "file:", file)
 
     new_file = File.addImage(file=file, name=name)
+    print("Success? File Uploaded and stored?!", new_file)
 
-    print("Success? File Uploaded and stored?!")
-
-    return jsonify(new_file).status_code(201)
+    return jsonify(new_file)
 
 # Get all files
 @app.get("/files")

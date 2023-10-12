@@ -29,7 +29,7 @@ class AWS:
             file,
             self.bucket_name,
             filename,
-            ExtraArgs={"ContentType": "image/svg+xml"}
+            ExtraArgs={"ContentType": "image/jpg"}
             )
 
     def get_presigned_url(self, filename):

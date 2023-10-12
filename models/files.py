@@ -135,8 +135,10 @@ class File(db.Model):
         db.session.commit()
 
         fp.close()
+
+        print("new File!", new_file)
         # FIXME: Return a dictionary with the new file's properties. DB query?
-        return {File.query.get_one_or_none(new_file.id)}
+        return {"name": new_file.name, "id": new_file.id, "presigned_url": new_file.presigned_url, "artist": new_file.Artist}
 
     @classmethod
     def get_all(cls):
