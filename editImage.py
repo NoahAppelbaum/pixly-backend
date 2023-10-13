@@ -2,6 +2,7 @@ from PIL import Image
 # from PIL.ExifTags import TAGS
 import tempfile
 
+
 def get_sepia_pixel(red, green, blue, alpha):
 
     tRed = get_max((0.759 * red) + (0.398 * green) + (0.194 * blue))

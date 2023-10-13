@@ -80,10 +80,11 @@ def editImage(id):
     #TODO: make this greyScaleImage one of several that can be called
     #    as needed
     body = request.json
-    print("request body:", body)
+
     operation = body["operation"]
     editedImage = operations[operation](temp_file)
     editedImage.seek(0)
+
 
     aws.save_file(file=editedImage, filename=f"{file.name}-edit")
 
