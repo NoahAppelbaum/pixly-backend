@@ -6,7 +6,7 @@ from scripts.s3_upload import AWS
 from flask_sqlalchemy import SQLAlchemy
 from flask import Flask, jsonify, request, flash, redirect, session, render_template
 from flask_cors import CORS, cross_origin
-from editImage import EditImage
+from editImage import EditImage, operations
 import urllib.request
 import tempfile
 
@@ -69,7 +69,7 @@ def get_one_file(id):
 
 
 #TODO: endpoint for updating/editing a file
-@app.post("/files/<int:id>")
+@app.patch("/files/<int:id>")
 def editImage(id):
     """Returns edited image upon submission of edits"""
 
@@ -79,13 +79,14 @@ def editImage(id):
 
     #TODO: make this greyScaleImage one of several that can be called
     #    as needed
-    editedImage = EditImage.greyScaleImage(temp_file)
+    body = request.json
+    print("request body:", body)
+    operation = body["operation"]
+    editedImage = operations[operation](temp_file)
     editedImage.seek(0)
 
     aws.save_file(file=editedImage, filename=f"{file.name}-edit")
 
-    # with open(editedImage, "rb") as image_data:
-    # aws.save_file(file=image_data, filename=f"{file.name}-edit")
     edit_url = aws.get_presigned_url(f"{file.name}-edit")
 
     file.edit_url = edit_url
@@ -93,4 +94,4 @@ def editImage(id):
     db.session.commit()
 
     # TODO: return statement????
-    return jsonify({"newURL": file.editurl})
+    return jsonify({"editUrl": edit_url})
