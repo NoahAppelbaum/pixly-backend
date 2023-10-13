@@ -31,11 +31,6 @@ connect_db(app)
 #######################################################################
 #API endpoints
 
-# Homepage
-# @app.get("/")
-# def display_form():
-#     return render_template('form.html')
-
 
 # Submit form
 @app.post("/files")
@@ -43,8 +38,6 @@ def submit_form():
 
     name = request.form.get("name")
     file = request.files.get("file")
-    # print("request.files", request.files)
-    # print("FROM MULTIDICT: name:", name, "file:", file)
 
     new_file = File.addImage(file=file, name=name)
     print("Success? File Uploaded and stored?!", new_file)
@@ -68,7 +61,6 @@ def get_one_file(id):
     return jsonify(file)
 
 
-#TODO: endpoint for updating/editing a file
 @app.patch("/files/<int:id>")
 def editImage(id):
     """Returns edited image upon submission of edits"""
@@ -77,8 +69,6 @@ def editImage(id):
 
     temp_file, file_name = urllib.request.urlretrieve(file.presigned_url)
 
-    #TODO: make this greyScaleImage one of several that can be called
-    #    as needed
     body = request.json
 
     operation = body["operation"]
@@ -94,5 +84,4 @@ def editImage(id):
     db.session.merge(file)
     db.session.commit()
 
-    # TODO: return statement????
     return jsonify({"editUrl": edit_url})

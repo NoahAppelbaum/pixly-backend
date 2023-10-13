@@ -134,11 +134,8 @@ class File(db.Model):
         aws.save_file(fp, name) # Save file to AWS.
 
         presigned_url = aws.get_presigned_url(name)
-        print("Presigned URL", presigned_url)
 
         new_file = File(presigned_url=presigned_url, name=name, **tagged_exif)
-
-        print("NEW FILE from files.py", new_file)
 
         db.session.add(new_file)
         db.session.commit()
